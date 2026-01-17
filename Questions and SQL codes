@@ -1,0 +1,44 @@
+1.Show average salary per department.
+2. Rank employees by salary (highest to lowest).
+3. Find employees earning above department average salary.
+4. Count employees per department.
+5. Find the highest paid employee in each department.
+
+SELECT *
+FROM work_employees;
+
+1. SELECT 
+department,
+AVG(salary) AS average_salary
+FROM work_employees
+GROUP BY department
+ORDER BY AVG(salary) DESC;
+
+2. SELECT
+name,
+salary,
+ROW_NUMBER() OVER(ORDER BY salary DESC)
+FROM work_employees;
+
+3. SELECT e.name, e.salary
+FROM work_employees e
+JOIN (
+  SELECT department, AVG(salary) AS avg_salary
+  FROM work_employees
+  GROUP BY department
+) d ON e.department = d.department
+WHERE e.salary > d.avg_salary;
+
+4. SELECT
+department,
+COUNT(name) AS total_employees
+FROM work_employees
+GROUP BY department;
+
+5. SELECT department, name, salary
+FROM work_employees e
+WHERE salary = (
+  SELECT MAX(salary)
+  FROM work_employees
+  WHERE department = e.department
+);
